@@ -6,11 +6,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
+
 # Create your views here.
 
 
 @api_view(['GET', 'POST'])
-def list_create_articles(request):
+def list_create_articles(request, format=None):
     if request.method == 'GET':
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)
@@ -27,7 +28,7 @@ def list_create_articles(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def article_detail(request, articleId):
+def article_detail(request, articleId, format=None):
     article = get_object_or_404(Article, id=articleId)
     if request.method == 'GET':
         serializer = ArticleSerializer(article)
