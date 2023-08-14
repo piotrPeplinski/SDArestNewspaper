@@ -7,9 +7,12 @@ from rest_framework.decorators import api_view
 from rest_framework import status, mixins, generics
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-
+from rest_framework import permissions
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.reverse import reverse
 
 # Create your views here.
+
 
 class ListCreateArticles(generics.ListCreateAPIView):
     queryset = Article.objects.all()
@@ -19,8 +22,21 @@ class ListCreateArticles(generics.ListCreateAPIView):
 class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+    permission_classes = [IsOwnerOrReadOnly]
 
 
 class ListCreateUsers(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get_permissions(self):
+        return [permissions.IsAdminUser() if self.request.method == 'GET' else permissions.AllowAny()]
+
+class APIRoot(APIView):
+    def get(self, request, format=None):
+        links = {
+            'articles': reverse('articles',request=request),
+            'users': reverse('users',request=request),
+            'token': reverse('token',request=request),
+        }
+        return Response(links)
