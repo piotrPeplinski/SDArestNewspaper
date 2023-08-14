@@ -23,8 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
         ]
     )
 
-    articles = serializers.PrimaryKeyRelatedField(
-        queryset=Article.objects.all(), many=True)
+    # articles = serializers.PrimaryKeyRelatedField(
+    #     queryset=Article.objects.all(), many=True)
+    # articles = serializers.StringRelatedField(many=True)
+    articles = serializers.HyperlinkedRelatedField(view_name='articleDetail', queryset=Article.objects.all(), many=True)
 
     class Meta:
         model = User

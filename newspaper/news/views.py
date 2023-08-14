@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from rest_framework import permissions
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.reverse import reverse
+from .paginators import UserPaginator
+from rest_framework import filters
 
 # Create your views here.
 
@@ -17,7 +19,8 @@ from rest_framework.reverse import reverse
 class ListCreateArticles(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-
+    filter_backends = [filters.OrderingFilter]
+    ordering = ['-date']
 
 class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
@@ -28,6 +31,7 @@ class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
 class ListCreateUsers(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = UserPaginator
 
     def get_permissions(self):
         return [permissions.IsAdminUser() if self.request.method == 'GET' else permissions.AllowAny()]
