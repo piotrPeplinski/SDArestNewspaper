@@ -19,8 +19,10 @@ from rest_framework import filters
 class ListCreateArticles(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering = ['-date']
+    #filter_backends = [filters.OrderingFilter]
+    #ordering = ['-date']
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
@@ -31,7 +33,7 @@ class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
 class ListCreateUsers(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class = UserPaginator
+    #pagination_class = UserPaginator
 
     def get_permissions(self):
         return [permissions.IsAdminUser() if self.request.method == 'GET' else permissions.AllowAny()]
